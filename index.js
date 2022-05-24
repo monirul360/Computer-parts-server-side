@@ -23,6 +23,10 @@ async function run() {
             const result = await pertsCollection.insertOne(perts);
             res.send(result);
         })
+        app.get('/perts', async (req, res) => {
+            const result = await pertsCollection.find().toArray();
+            res.send(result);
+        })
     }
     finally {
     }
