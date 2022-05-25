@@ -19,6 +19,7 @@ async function run() {
     try {
         await client.connect();
         const pertsCollection = client.db("Computers").collection("perts");
+        const reviewCollection = client.db("Computers").collection("review");
         app.post('/perts', async (req, res) => {
             const perts = req.body;
             const result = await pertsCollection.insertOne(perts);
@@ -38,6 +39,11 @@ async function run() {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
             const result = await pertsCollection.deleteOne(filter);
+            res.send(result);
+        })
+        app.post('/review', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
             res.send(result);
         })
     }
