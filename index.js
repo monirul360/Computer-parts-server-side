@@ -97,6 +97,10 @@ async function run() {
             var token = jwt.sign({ email: email }, process.env.SICRITE_KEY, { expiresIn: '24d' });
             res.send({ result, token });
         })
+        app.get('/user', async (req, res) => {
+            const user = await userCollection.find().toArray();
+            res.send(user);
+        })
     }
 
     finally {
