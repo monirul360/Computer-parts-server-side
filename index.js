@@ -3,7 +3,7 @@ const app = express()
 require('dotenv').config()
 var jwt = require('jsonwebtoken');
 var cors = require('cors')
-const port = process.PORT || 5000
+const port = process.env.PORT || 5000
 require('dotenv').config()
 // muddle 
 app.use(cors())
