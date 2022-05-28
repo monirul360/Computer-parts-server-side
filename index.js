@@ -9,6 +9,7 @@ require('dotenv').config()
 app.use(cors())
 app.use(express.json());
 
+
 const stripe = require("stripe")('sk_test_51L2KrPBqppFXqmqSMlSHkIQUBu9sVzUvYZVsN45p8WachNPw0Rcer0aPQNcnGaOnuGPQ0RipdL2b2bexyqHMmpTY008WdeIEOV');
 // mongodb connection 
 
@@ -77,11 +78,12 @@ async function run() {
             const result = await bookingCollection.insertOne(booking);
             res.send(result);
         })
+
         app.get('/booking', veriFyJwtToken, async (req, res) => {
-            const email = req.query.email;
+            const customerEmail = req.query.email;
             const deCodeEmail = req.decoded.email;
-            if (email === deCodeEmail) {
-                const query = { email: email };
+            if (customerEmail === deCodeEmail) {
+                const query = { customerEmail: customerEmail };
                 const bookings = await bookingCollection.find(query).toArray();
                 return res.send(bookings);
             } else {
@@ -150,16 +152,23 @@ async function run() {
             }
         })
 
-        app.post('/create-payment-intent', async (req, res) => {
-            const service = req.body;
-            const price = service.price;
+        app.delete("/booking/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await bookingCollection.deleteOne(query);
+            res.send(result);
+        });
+
+        app.post("/create-payment-intent", async (req, res) => {
+            const order = req.body;
+            const price = order.price;
             const amount = price * 100;
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: amount,
-                currency: 'usd',
-                payment_method_types: ['card']
+                currency: "usd",
+                payment_method_types: ["card"],
             });
-            res.send({ clientSecret: paymentIntent.client_secret })
+            res.send({ clientSecret: paymentIntent.client_secret });
         });
 
         app.put('/booking/:id', async (req, res) => {
