@@ -14,8 +14,15 @@ const stripe = require("stripe")('sk_test_51L2KrPBqppFXqmqSMlSHkIQUBu9sVzUvYZVsN
 // mongodb connection 
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const uri = `mongodb+srv://${process.env.Us_name}:${process.env.DBPASS}@cluster0.chhfl.mongodb.net/?retryWrites=true&w=majority`;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+const uri = "mongodb+srv://computer:bkC42XoVP0cSuqD8@cluster0.chhfl.mongodb.net/?retryWrites=true&w=majority";
+const client = new MongoClient(uri, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
+});
 
 function veriFyJwtToken(req, res, next) {
     const AuthHeader = req.headers.authraze;
@@ -23,7 +30,7 @@ function veriFyJwtToken(req, res, next) {
         return res.status(401).send({ message: 'Unauthrorizede access' });
     }
     const token = AuthHeader;
-    jwt.verify(token, process.env.SICRITE_KEY, function (err, decoded) {
+    jwt.verify(token, sf4fh95478h, function (err, decoded) {
         if (err) {
             return res.status(403).send({ message: 'Forbidden access' })
         }
