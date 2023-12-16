@@ -80,16 +80,30 @@ async function run() {
             res.send(result);
         })
 
+
+        app.get('/moni', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const review = await reviewCollection.find(query).toArray();
+            res.send(review);
+        })
+        app.delete('/review/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await reviewCollection.deleteOne(filter);
+            res.send(result);
+        })
         app.post('/booking', async (req, res) => {
             const booking = req.body;
             const result = await bookingCollection.insertOne(booking);
             res.send(result);
         })
-
-        app.get('/booking', veriFyJwtToken, async (req, res) => {
+        // veriFyJwtToken
+        app.get('/booking', async (req, res) => {
             const customerEmail = req.query.email;
-            const deCodeEmail = req.decoded.email;
-            if (customerEmail === deCodeEmail) {
+            // const deCodeEmail = req.decoded.email;
+            // === deCodeEmail
+            if (customerEmail) {
                 const query = { customerEmail: customerEmail };
                 const bookings = await bookingCollection.find(query).toArray();
                 return res.send(bookings);
@@ -143,10 +157,10 @@ async function run() {
             res.send({ admin: isAdmin })
         })
 
-        app.put('/user/admin/:email', veriFyJwtToken, async (req, res) => {
+        app.put('/user/admin/:email', async (req, res) => {
             const email = req.params.email;
-            const requester = req.decoded.email;
-            const requesterAcount = await userCollection.findOne({ email: requester })
+            // const requester = req.decoded.email;
+            const requesterAcount = await userCollection.findOne()
             if (requesterAcount.role === 'admin') {
                 const filter = { email: email };
                 const updateDoc = {
