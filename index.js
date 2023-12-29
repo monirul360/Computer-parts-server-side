@@ -111,6 +111,19 @@ async function run() {
                 return res.status(403).send({ message: 'Forbidden access' })
             }
         })
+        app.get('/useroder', async (req, res) => {
+            const result = await bookingCollection.find().toArray();
+            res.send(result);
+        })
+
+        app.delete("/useroder/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await bookingCollection.deleteOne(query);
+            res.send(result);
+        });
+
+
         app.get('/users/:email', async (req, res) => {
             const email = req.params.email;
             const users = await userCollection.findOne({ email: email });
@@ -150,10 +163,17 @@ async function run() {
             res.send(user);
         })
 
+        app.delete("/user/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await userCollection.deleteOne(query);
+            res.send(result);
+        });
+
         app.get('/admin/:email', async (req, res) => {
             const email = req.params.email;
             const user = await userCollection.findOne({ email: email });
-            const isAdmin = user.role === 'admin';
+            const isAdmin = user?.role === 'admin';
             res.send({ admin: isAdmin })
         })
 
